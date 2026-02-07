@@ -1,15 +1,15 @@
 {
   "name": "@n0isy/nest-postgres",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "description": "PostgreSQL module for Nest framework (node.js) 😻",
   "author": "n0isy",
   "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "directories": {
-    "lib": "lib",
-    "test": "tests"
-  },
+  "files": [
+    "dist",
+    "lib"
+  ],
   "scripts": {
     "build": "rm -rf dist && tsc -p tsconfig.json",
     "format": "prettier --write \"**/*.ts\"",

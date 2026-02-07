@@ -1,0 +1,13 @@
+.github/
+.husky/
+.claude/
+.idea/
+tests/
+node_modules/
+coverage/
+eslint.config.mjs
+tsconfig.build.json
+renovate.json
+repomix-output.md
+.env
+*.tgz
