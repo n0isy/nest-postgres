@@ -53,6 +53,7 @@ or
 - [Migration](#migration)
 - [Usage](#usage)
   - [PostgresModule](#postgresmodule)
+  - [PostgresPoolModule](#postgrespoolmodule)
   - [MultiConnectionsDatabase](#multi-connections-database)
   - [ExampleOfUse](#example-of-use)
 
@@ -100,6 +101,63 @@ or asynchronously
     }),
   ],
 })
+```
+
+`PostgresModule` keeps the original behavior and provides a dedicated
+`PoolClient`, injectable with `InjectClient` or `InjectConnection`.
+
+### PostgresPoolModule
+
+Use `PostgresPoolModule` when the application should share a `pg.Pool`:
+
+```typescript
+@Module({
+  imports: [
+    PostgresPoolModule.forRoot({
+      connectionString: 'postgresql://[user]:[password]@[host]/[nameDb]',
+    }),
+  ],
+})
+export class AppModule {}
+```
+
+Inject it independently with `InjectPool`:
+
+```typescript
+import { InjectPool, PostgresPool } from '@n0isy/nest-postgres';
+
+@Injectable()
+export class ReportsService {
+  constructor(@InjectPool() private readonly pool: PostgresPool) {}
+
+  async createReport(): Promise<void> {
+    await this.pool.transaction(async (client) => {
+      await client.query('INSERT INTO reports DEFAULT VALUES');
+      await client.query('INSERT INTO audit_log DEFAULT VALUES');
+    });
+  }
+}
+```
+
+The callback uses one checked-out client, runs `BEGIN`/`COMMIT`, rolls back on
+failure, and always releases the client. For unrelated queries, call
+`pool.query(...)` directly.
+
+Client and pool registrations use separate DI tokens, so both modules can be
+registered for the same connection name when both access styles are needed:
+
+```typescript
+import { PoolClient } from 'pg';
+
+imports: [
+  PostgresModule.forRoot(options, 'main'),
+  PostgresPoolModule.forRoot(options, 'main'),
+]
+
+constructor(
+  @InjectClient('main') private readonly client: PoolClient,
+  @InjectPool('main') private readonly pool: PostgresPool,
+) {}
 ```
 
 ## Example of use

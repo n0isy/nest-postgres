@@ -34,6 +34,12 @@ export function getConnectionToken(
   return `${connection.name || DEFAULT_CONNECTION_NAME}`;
 }
 
+export function getPoolToken(
+  connection: PostgresModuleOptions | string = DEFAULT_CONNECTION_NAME,
+): string {
+  return `${String(getConnectionToken(connection))}Pool`;
+}
+
 /**
  * This function returns a Connection prefix based on the connection name
  * @param {PostgresModuleOptions | string} [connection='default'] This optional parameter is either
