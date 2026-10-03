@@ -10,6 +10,8 @@ The original author dropped the TypeScript source code from the repository, publ
 - TypeScript source code (`lib/`) restored from compiled `dist/` output
 - `tsconfig.json` recreated (was missing from the original repo)
 - Docker Compose test config pinned to `postgres:16` (compatibility with Postgres 18+ volume layout)
+- Optional `PostgresPoolModule` and `InjectPool` APIs were added
+- `PostgresPool.transaction(callback)` was added for transactions on one checked-out client
 
 ## Migration steps
 
@@ -41,6 +43,31 @@ Replace all imports from `nest-postgres` to `@n0isy/nest-postgres`:
 ### 3. No API changes
 
 The public API is identical. No code changes are needed beyond updating the import paths.
+
+The existing `PostgresModule`, `InjectClient`, and `InjectConnection` APIs keep
+providing a dedicated `PoolClient`. Applications that prefer a shared pool can
+opt in independently:
+
+```typescript
+import {
+  InjectPool,
+  PostgresPool,
+  PostgresPoolModule,
+} from '@n0isy/nest-postgres';
+
+@Module({
+  imports: [PostgresPoolModule.forRoot({ connectionString })],
+})
+export class AppModule {}
+
+@Injectable()
+export class UsersService {
+  constructor(@InjectPool() private readonly pool: PostgresPool) {}
+}
+```
+
+It is also valid to register `PostgresModule` and `PostgresPoolModule` with the
+same connection name; their injection tokens are separate.
 
 ## Compatibility
 

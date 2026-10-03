@@ -1,5 +1,5 @@
 import { Inject } from '@nestjs/common';
-import { getConnectionToken } from './postgres.utils';
+import { getConnectionToken, getPoolToken } from './postgres.utils';
 import { PostgresModuleOptions } from '../interfaces/postgres-options.interface';
 
 export const InjectClient = (
@@ -11,7 +11,7 @@ export const InjectClient = (
 export const InjectPool = (
   connection?: string,
 ): PropertyDecorator & ParameterDecorator => {
-  return Inject(getConnectionToken(connection));
+  return Inject(getPoolToken(connection));
 };
 
 export const InjectConnection = (
