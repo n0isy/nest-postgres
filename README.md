@@ -305,9 +305,31 @@ TypeScript source code (`lib/`) was restored from compiled `dist/` output using 
 ## Contribute
 Feel free to help this library. Make sure you follow the guidelines.
 
+## Releasing
+
+GitHub Actions runs lint, build, and PostgreSQL integration tests for pull requests
+and pushes to `main`. Tags matching `v*` run the same checks before publishing to npm
+through the trusted publisher configured for `.github/workflows/publish.yml`.
+The tag must match the version in both `package.json` and `package-lock.json`,
+and its commit must belong to `main`. This workflow publishes stable versions only.
+
+For a new patch release, start from a clean, up-to-date `main` with passing CI:
+
+```bash
+npm ci
+npm run release -- patch
+```
+
+`release-it` updates the version, commits it, and pushes a `vX.Y.Z` tag.
+GitHub Actions then builds and publishes the package. No local npm publish token
+is required. Check the **Publish to npm** workflow and the version on npm after
+each release. For a version already committed to `main`, create and push its
+matching tag instead of incrementing it again.
+
 ## Stay in touch
 
 - Author - [n0isy](https://github.com/n0isy)
+- Maintainer - [Leo5878](https://github.com/Leo5878)
 - Original Author - [Tony133](https://github.com/Tony133)
 - Framework - [https://nestjs.com](https://nestjs.com/)
 

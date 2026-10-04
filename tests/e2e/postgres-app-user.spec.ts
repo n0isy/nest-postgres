@@ -3,6 +3,8 @@ import { TestingModule, Test } from '@nestjs/testing';
 import { UsersModule } from '../src/apps/app-postgres/app/users/users.module';
 import * as request from 'supertest';
 import { AppModule } from '../src/apps/app-postgres/app/app.module';
+import { PoolClient } from 'pg';
+import { getConnectionToken } from '../../lib/common/postgres.utils';
 import {
   FastifyAdapter,
   NestFastifyApplication,
@@ -21,6 +23,10 @@ describe('[Feature] Users - /users', () => {
     );
     await app.init();
     await app.getHttpAdapter().getInstance().ready();
+    // Other suites also insert users; reset this suite's rows and expected IDs.
+    await app
+      .get<PoolClient>(getConnectionToken())
+      .query('TRUNCATE TABLE users RESTART IDENTITY');
   });
 
   it('should create a new users [POST /users]', () => {

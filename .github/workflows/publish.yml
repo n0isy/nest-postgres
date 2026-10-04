@@ -1,0 +1,57 @@
+name: Publish to npm
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  checks:
+    uses: ./.github/workflows/ci.yml
+
+  publish:
+    name: Publish with npm trusted publishing
+    needs: checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      HUSKY: '0'
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Require a commit from main
+        run: git merge-base --is-ancestor HEAD origin/main
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+      - run: npm install --global npm@11.21.0
+      - name: Verify release version
+        run: |
+          node <<'NODE'
+          const { version } = require('./package.json');
+          const lock = require('./package-lock.json');
+          if (!/^\d+\.\d+\.\d+$/.test(version)) {
+            throw new Error('This workflow publishes stable releases only.');
+          }
+          if (process.env.GITHUB_REF_NAME !== `v${version}`) {
+            throw new Error('Release tag must match package.json version.');
+          }
+          if (lock.version !== version || lock.packages[''].version !== version) {
+            throw new Error('package-lock.json version must match package.json.');
+          }
+          NODE
+      - run: npm ci
+      - run: npm publish --access public

@@ -2,7 +2,6 @@ import {
   DynamicModule,
   Global,
   Inject,
-  Logger,
   Module,
   OnApplicationShutdown,
   Provider,
@@ -76,9 +75,7 @@ export class PostgresCoreModule implements OnApplicationShutdown {
     connection && (await connection.end);
   }
 
-  static createAsyncProviders(
-    options: PostgresModuleAsyncOptions,
-  ): Provider[] {
+  static createAsyncProviders(options: PostgresModuleAsyncOptions): Provider[] {
     if (options.useExisting || options.useFactory) {
       return [this.createAsyncOptionsProvider(options)];
     }
@@ -105,8 +102,7 @@ export class PostgresCoreModule implements OnApplicationShutdown {
 
     // `as Type<PostgresOptionsFactory>` is a workaround for microsoft/TypeScript#31603
     const inject = [
-      (options.useClass ||
-        options.useExisting) as Type<PostgresOptionsFactory>,
+      (options.useClass || options.useExisting) as Type<PostgresOptionsFactory>,
     ];
 
     return {
@@ -118,9 +114,7 @@ export class PostgresCoreModule implements OnApplicationShutdown {
     };
   }
 
-  private static async createConnectionFactory(
-    options: PostgresModuleOptions,
-  ) {
+  private static async createConnectionFactory(options: PostgresModuleOptions) {
     return lastValueFrom(
       defer(() => {
         const client = new Pool(options);

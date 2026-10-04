@@ -83,10 +83,9 @@ export class PostgresPoolCoreModule implements OnApplicationShutdown {
   }
 
   async onApplicationShutdown() {
-    const pool = this.moduleRef.get<PostgresPool>(
-      getPoolToken(this.options),
-      { strict: false },
-    );
+    const pool = this.moduleRef.get<PostgresPool>(getPoolToken(this.options), {
+      strict: false,
+    });
     if (pool && typeof pool.end === 'function') {
       await pool.end();
     }

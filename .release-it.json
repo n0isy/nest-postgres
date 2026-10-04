@@ -1,0 +1,10 @@
+{
+  "git": {
+    "requireBranch": "main",
+    "commitMessage": "build(release): v${version}",
+    "tagName": "v${version}"
+  },
+  "npm": {
+    "publish": false
+  }
+}

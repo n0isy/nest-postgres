@@ -1,5 +1,8 @@
 import { DynamicModule, Module } from '@nestjs/common';
-import { PostgresModuleAsyncOptions, PostgresModuleOptions } from './interfaces';
+import {
+  PostgresModuleAsyncOptions,
+  PostgresModuleOptions,
+} from './interfaces';
 import { PostgresCoreModule } from './postgres-core.module';
 
 @Module({})

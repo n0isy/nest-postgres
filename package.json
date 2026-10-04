@@ -3,6 +3,12 @@
   "version": "0.0.19",
   "description": "PostgreSQL module for Nest framework (node.js) 😻",
   "author": "n0isy",
+  "contributors": [
+    {
+      "name": "Leonardo",
+      "url": "https://github.com/Leo5878"
+    }
+  ],
   "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -13,12 +19,14 @@
   "scripts": {
     "build": "rm -rf dist && tsc -p tsconfig.json",
     "format": "prettier --write \"**/*.ts\"",
-    "lint": "eslint 'lib/**/*.ts' --fix",
+    "lint": "eslint 'lib/**/*.ts'",
+    "lint:fix": "npm run lint -- --fix",
+    "prepublishOnly": "npm run build",
     "prepublish:npm": "npm run build",
     "publish:npm": "npm publish --access public",
     "prepublish:next": "npm run build",
     "publish:next": "npm publish --access public --tag next",
-    "test:e2e": "jest --config ./tests/jest-e2e.json --detectOpenHandles --forceExit",
+    "test:e2e": "jest --config ./tests/jest-e2e.json --runInBand --detectOpenHandles --forceExit",
     "test:e2e:dev": "jest --config ./tests/jest-e2e.json --runInBand --watch",
     "prerelease": "npm run build",
     "release": "release-it",
@@ -64,12 +72,9 @@
     "reflect-metadata": "^0.1.13 || ^0.2.0",
     "rxjs": "^6.6.3 || ^7.2.0"
   },
-  "lint-staged": {
-    "**/*.{ts,json}": []
-  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/n0isy/nest-postgres"
+    "url": "git+https://github.com/n0isy/nest-postgres.git"
   },
   "dependencies": {
     "unrs-resolver": "^1.12.2"
